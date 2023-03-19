@@ -1,0 +1,17 @@
+body, html {
+    padding: 0;
+    margin: 0;
+}
+
+section {
+    height: 100vh;
+    position: relative;
+}
+
+section > * {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
