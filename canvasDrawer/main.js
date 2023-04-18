@@ -1,4 +1,4 @@
-const canvases = document.querySelectorAll(".section__bg canvas");
+const canvases = document.querySelectorAll(".section__bg canvas:not(.temp-canvas)");
 const gap = 30;
 const quality = 15;
 const animationSpeed = 2;
@@ -11,13 +11,14 @@ img.crossOrigin = `Anonymous`;
 img.src = "./assets/test.png";
 
 img.onload = function() {
-    const tempCanvas = document.createElement("canvas");
+    // const tempCanvas = document.createElement("canvas");
+    const tempCanvas = document.querySelector(".temp-canvas");
     // tempCanvas.width = img.width;
     // tempCanvas.height = img.height;
     tempCanvas.width = canvases[0].width;
     tempCanvas.height = canvases[0].height;
 
-    const tempCtx = tempCanvas.getContext('2d');
+    const tempCtx = tempCanvas.getContext("2d", { willReadFrequently: true });
     const left = (tempCanvas.width - img.width) / 2;
     const top = (tempCanvas.height - img.height) / 2;
     // tempCtx.drawImage(img, left, top);
@@ -29,9 +30,9 @@ img.onload = function() {
     let part = 0;
     let dt = 0.01;
     function makeImageDarker(alpha = 1) {
+        tempCtx.save();
         tempCtx.fillStyle = "rgba(0, 0, 0, 1)";
         tempCtx.fillRect(0, 0, canvases[0].width, canvases[0].height);
-        tempCtx.save();
         tempCtx.globalAlpha = alpha;
         // tempCtx.drawImage(img, left, top);
         drawImageScaled(img, tempCtx);
@@ -74,7 +75,7 @@ for (let canvasEl of canvases) {
     const ctx = canvasEl.getContext("2d");
     contexts.push(ctx);
 
-    draw(ctx);
+    draw(ctx, null, 1);
 }
 
 function draw(ctx, imageData, perlinOffset) {
@@ -88,7 +89,9 @@ function draw(ctx, imageData, perlinOffset) {
 
     for (let y = gap; y < ctx.canvas.height; y += local_gap) {
         ctx.beginPath();
-        ctx.moveTo(0, y);
+        const prln = perlin.get(perlinOffset / 200, (y + perlinOffset / 2) / 200);
+        let prln_val = map_range(prln, 0, 1, 0, 30);
+        ctx.moveTo(0, y - prln_val);
             for (let x = 0; x < ctx.canvas.width + quality; x += quality) {
                 let local_y = y;
                 if(imageData) {
@@ -96,11 +99,11 @@ function draw(ctx, imageData, perlinOffset) {
                     const val = imageData[pixelStart];
                     local_y -= map_range(val, 0, 255, 0, 80);
                     // console.log(perlinOffset);
-                    if(perlinOffset) {
-                        const prln = perlin.get((x + perlinOffset) / 200, (y + perlinOffset / 2) / 200);
-                        let prln_val = map_range(prln, 0, 1, 0, 30);
-                        local_y -= prln_val;
-                    }
+                }
+                if(perlinOffset) {
+                    const prln = perlin.get((x + perlinOffset) / 200, (y + perlinOffset / 2) / 200);
+                    let prln_val = map_range(prln, 0, 1, 0, 30);
+                    local_y -= prln_val;
                 }
                 ctx.lineTo(x, local_y);
             }
@@ -114,13 +117,13 @@ function map_range(value, low1, high1, low2, high2) {
 }
 
 function drawImageScaled(img, ctx) {
-   const canvas = ctx.canvas ;
-   const hRatio = canvas.width  / img.width    ;
-   const vRatio =  canvas.height / img.height  ;
-   const ratio  = Math.min ( hRatio, vRatio );
-   const centerShift_x = ( canvas.width - img.width*ratio ) / 2;
-   const centerShift_y = ( canvas.height - img.height*ratio ) / 2;  
-   ctx.clearRect(0,0,canvas.width, canvas.height);
-   ctx.drawImage(img, 0,0, img.width, img.height,
-                      centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);  
+    const canvas = ctx.canvas ;
+    const hRatio = canvas.width  / img.width    ;
+    const vRatio =  canvas.height / img.height  ;
+    const ratio  = Math.min ( hRatio, vRatio );
+    const centerShift_x = ( canvas.width - img.width*ratio ) / 2;
+    const centerShift_y = ( canvas.height - img.height*ratio ) / 2;  
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    ctx.drawImage(img, 0,0, img.width, img.height,
+                        centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);  
 }
