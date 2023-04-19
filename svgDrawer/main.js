@@ -16,7 +16,7 @@ let dataPrev = Date.now();
 let img = new window.Image();
 img.crossOrigin = `Anonymous`;
 
-img.src = "./assets/test.png";
+img.src = "./assets/logo-my-biz-15-darker.jpg";
 
 img.onload = function() {
     // const tempCanvas = document.createElement("canvas");
