@@ -6,8 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="./styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
 </head>
 <body>
+
+    <header>
+        <button class="ctrl-btn ctrl-btn--hide">Hide logo</button>
+        <button  class="ctrl-btn ctrl-btn--show">Show logo</button>
+    </header>
     
     <section class="section section__black-bg">
         <div class="section__bg">
@@ -17,9 +23,10 @@
     
     <section class="section section__black-bg">
         <div class="section__bg">
-            <canvas class="temp-canvas"></canvas>
+            <canvas></canvas>
         </div>
     </section>
+
     <section class="section"></section>
 
     <script src='./perlin.js'></script>
