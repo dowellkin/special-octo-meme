@@ -126,10 +126,15 @@ for (let canvasEl of canvases) {
 
 function hideImage(time = 3) {
     TweenLite.to(someData, time, { imageAlpha: 0, ease: "power2.out" });
+    const preloader = document.querySelector(".prel");
+    gsap.to(preloader, 0.8, { height: "50vh", ease: "power2.out", delay: time-1 });
+    gsap.from(document.querySelector(".ctrl-btn--show"), 0.8, { y: "-20", opacity: "0", ease: "power2.out", delay: time-1 });
 }
 
 function showImage(time = 3) {
-    TweenLite.to(someData, time, { imageAlpha: 1, ease: "power2.out" });
+    const preloader = document.querySelector(".prel");
+    gsap.to(preloader, 0.8, { height: "100vh", ease: "power2.out" });
+    TweenLite.to(someData, time, { imageAlpha: 1, ease: "power2.out", delay: .8 });
 }
 
 document.querySelector(".ctrl-btn--hide").addEventListener('click', () => hideImage());
