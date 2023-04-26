@@ -5,9 +5,12 @@ let gap = 30;
 let quality = 15;
 let imageOffset = 80;
 let wavesOffset = 30;
-const animationSpeed = 1.5;
+let animationSpeed = 1.5;
 const contexts = [];
 let firstTime = true;
+
+let perlinYOffset = 2;
+let perlinScale = 200;
 
 const tempCanvas = document.querySelector(".temp-canvas");
 
@@ -157,7 +160,7 @@ function draw(ctx, imageData, perlinOffset) {
     // ctx.beginPath();
     for (let y = gap; y < svg.clientHeight; y += local_gap) {
         
-        const prln = perlin.noise(perlinOffset / 200, (y + perlinOffset / 2) / 200, 1);
+        const prln = perlin.noise(perlinOffset / perlinScale, (y + perlinOffset / perlinYOffset) / perlinScale, 1);
         let prln_val = map_range(prln, 0, 1, 0, wavesOffset);
         // ctx.moveTo(0, y - prln_val);
         path += `M${0} ${y - prln_val.toFixed(4)}`;
@@ -169,7 +172,7 @@ function draw(ctx, imageData, perlinOffset) {
                 local_y -= map_range(val, 0, 255, 0, imageOffset) * someData.imageAlpha;
             }
             if(perlinOffset) {
-                const prln = perlin.noise((x + perlinOffset) / 200, (y + perlinOffset / 2) / 200, 1);
+                const prln = perlin.noise((x + perlinOffset) / perlinScale, (y + perlinOffset / perlinYOffset) / perlinScale, 1);
                 let prln_val = map_range(prln, 0, 1, 0, wavesOffset);
                 local_y -= prln_val;
             }
@@ -206,3 +209,14 @@ function drawImageScaled(img, ctx) {
     ctx.drawImage(img, 0,0, img.width, img.height,
                         centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);  
 }
+
+const settings = QuickSettings.create(20, 100, 'settings');
+settings.addRange('gap', 10, 100, gap, 1, (val) => {gap = val});
+settings.addRange('quality', 5, 150, quality, 1, (val) => {quality = val});
+settings.addRange('imageOffset', 0, 200, imageOffset, 1, (val) => {imageOffset = val});
+settings.addRange('wavesOffset', 0, 200, wavesOffset, 1, (val) => {wavesOffset = val});
+settings.addRange('animationSpeed', 0, 20, animationSpeed, 0.1, (val) => {animationSpeed = val});
+settings.addRange('perlinScale', 0, 1000, perlinScale, 10, (val) => {perlinScale = val});
+settings.addRange('perlinYOffset', 1, 10, perlinYOffset, 1, (val) => {perlinYOffset = val});
+// let imageOffset = 80;
+// let wavesOffset = 30;
